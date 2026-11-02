@@ -1,13 +1,13 @@
-from pypdf import PdfMerger, PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter
 from pdf2docx import Converter
 
 def merge_pdfs(pdf_list, output_path):
     """Menggabungkan beberapa file PDF menjadi satu file."""
-    merger = PdfMerger()
+    writer = PdfWriter()
     for pdf in pdf_list:
-        merger.append(pdf)
-    merger.write(output_path)
-    merger.close()
+        writer.append(pdf)
+    writer.write(output_path)
+    writer.close()
 
 def split_pdf(input_pdf, output_pdf, start_page, end_page):
     """
@@ -24,6 +24,7 @@ def split_pdf(input_pdf, output_pdf, start_page, end_page):
             
     with open(output_pdf, "wb") as f:
         writer.write(f)
+    writer.close()
 
 def pdf_to_docx(input_pdf, output_docx):
     """Mengonversi file PDF menjadi dokumen Word (.docx)."""
