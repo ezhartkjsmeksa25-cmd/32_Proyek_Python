@@ -2,19 +2,16 @@ import os
 from PIL import Image
 
 def process_image(input_path, output_path, target_format="JPEG", quality=85, resize_dim=None):
-    """
-    Memproses gambar: kompresi, konversi format, dan resize opsional.
-    """
     with Image.open(input_path) as img:
-        # Konversi mode warna ke RGB jika target JPEG (mencegah error gambar PNG transparan)
+        # Konversi otomatis RGBA/P ke RGB jika menyimpan sebagai JPEG
         if target_format.upper() in ["JPEG", "JPG"] and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         
-        # Eksekusi Resize jika parameter diberikan
+        # Resize jika dimensi diberikan
         if resize_dim and isinstance(resize_dim, tuple):
             img = img.resize(resize_dim, Image.Resampling.LANCZOS)
         
-        # Simpan Gambar
+        # Simpan sesuai format target
         if target_format.upper() in ["JPEG", "JPG"]:
             img.save(output_path, format="JPEG", quality=quality, optimize=True)
         else:
