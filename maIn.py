@@ -4,6 +4,7 @@ warnings.filterwarnings("ignore")
 import os
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
+from PIL import Image
 
 # Import modul backend
 from core.image_module import process_image
@@ -19,7 +20,7 @@ class EduDocApp(ctk.CTk):
         self.title("EduDoc Desktop Utility")
         self.geometry("950x700")
         self.minsize(850, 600)
-        self.configure(fg_color="#f3f4f6")  # Latar belakang utama abu-abu terang
+        self.configure(fg_color="#f3f4f6")
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -85,6 +86,7 @@ class EduDocApp(ctk.CTk):
 
         # Variable Simpan State
         self.selected_image_path = ""
+        self.selected_image_info = ""
         self.pdf_merge_list = []
         self.selected_split_pdf = ""
         self.selected_docx_pdf = ""
@@ -95,6 +97,16 @@ class EduDocApp(ctk.CTk):
     def clear_main_frame(self):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
+
+    # LANGKAH 1: Fungsi pembantu untuk konfirmasi buka folder
+    def notify_and_open_folder(self, message, file_path):
+        open_dir = messagebox.askyesno(
+            "Sukses", 
+            f"{message}\n\nApakah Anda ingin langsung membuka folder penyimpanan?"
+        )
+        if open_dir:
+            folder_path = os.path.dirname(os.path.abspath(file_path))
+            os.startfile(folder_path)
 
     def highlight_nav(self, active_btn):
         for btn in [self.btn_image, self.btn_pdf, self.btn_about]:
@@ -126,6 +138,11 @@ class EduDocApp(ctk.CTk):
         text_color = "#111827" if self.selected_image_path else "#6b7280"
         self.lbl_file_path = ctk.CTkLabel(file_frame, text=display_text, text_color=text_color)
         self.lbl_file_path.pack(side="left", padx=10, pady=12)
+
+        self.lbl_img_info = ctk.CTkLabel(
+            file_frame, text=self.selected_image_info, text_color="#6b7280", font=ctk.CTkFont(size=12)
+        )
+        self.lbl_img_info.pack(side="right", padx=15, pady=12)
 
         # Options Section
         opt_frame = ctk.CTkFrame(self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb")
@@ -198,6 +215,15 @@ class EduDocApp(ctk.CTk):
             self.lbl_file_path.configure(
                 text=os.path.basename(file_path), text_color="#111827"
             )
+
+            size_bytes = os.path.getsize(file_path)
+            size_str = f"{size_bytes / (1024 * 1024):.2f} MB" if size_bytes >= 1024 * 1024 else f"{size_bytes / 1024:.1f} KB"
+
+            with Image.open(file_path) as img:
+                w, h = img.size
+
+            self.selected_image_info = f"Resolusi: {w}x{h} px  |  Ukuran: {size_str}"
+            self.lbl_img_info.configure(text=self.selected_image_info)
 
     def update_quality_label(self, value):
         self.lbl_quality_val.configure(text=f"{int(value)}%")
