@@ -9,7 +9,7 @@ from tkinter import filedialog, messagebox
 from core.image_module import process_image
 from core.pdf_module import merge_pdfs, split_pdf, pdf_to_docx
 
-ctk.set_appearance_mode("Dark")
+ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
 class EduDocApp(ctk.CTk):
@@ -19,44 +19,68 @@ class EduDocApp(ctk.CTk):
         self.title("EduDoc Desktop Utility")
         self.geometry("950x700")
         self.minsize(850, 600)
+        self.configure(fg_color="#f3f4f6")  # Latar belakang utama abu-abu terang
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # ------------------- SIDEBAR -------------------
-        self.sidebar_frame = ctk.CTkFrame(self, width=200, corner_radius=0)
+        # ------------------- SIDEBAR (PUTIH BERSIH) -------------------
+        self.sidebar_frame = ctk.CTkFrame(
+            self, width=200, corner_radius=0, fg_color="#ffffff", border_width=1, border_color="#e5e7eb"
+        )
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
 
         self.logo_label = ctk.CTkLabel(
             self.sidebar_frame, 
             text="EduDoc\nUtility", 
-            font=ctk.CTkFont(size=22, weight="bold")
+            font=ctk.CTkFont(size=22, weight="bold"),
+            text_color="#111827"
         )
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 30))
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(25, 30))
 
         self.btn_image = ctk.CTkButton(
-            self.sidebar_frame, text="Image Utility", command=self.show_image_tab
+            self.sidebar_frame, 
+            text="Image Utility", 
+            fg_color="#e5e7eb", 
+            text_color="#111827", 
+            hover_color="#d1d5db",
+            command=self.show_image_tab
         )
-        self.btn_image.grid(row=1, column=0, padx=20, pady=10)
+        self.btn_image.grid(row=1, column=0, padx=20, pady=8)
 
         self.btn_pdf = ctk.CTkButton(
-            self.sidebar_frame, text="PDF Utility", command=self.show_pdf_tab
+            self.sidebar_frame, 
+            text="PDF Utility", 
+            fg_color="#e5e7eb", 
+            text_color="#111827", 
+            hover_color="#d1d5db",
+            command=self.show_pdf_tab
         )
-        self.btn_pdf.grid(row=2, column=0, padx=20, pady=10)
+        self.btn_pdf.grid(row=2, column=0, padx=20, pady=8)
 
         self.btn_about = ctk.CTkButton(
-            self.sidebar_frame, text="About", command=self.show_about_tab
+            self.sidebar_frame, 
+            text="About", 
+            fg_color="#e5e7eb", 
+            text_color="#111827", 
+            hover_color="#d1d5db",
+            command=self.show_about_tab
         )
-        self.btn_about.grid(row=3, column=0, padx=20, pady=10)
+        self.btn_about.grid(row=3, column=0, padx=20, pady=8)
 
         self.status_label = ctk.CTkLabel(
-            self.sidebar_frame, text="Status: Ready", font=ctk.CTkFont(size=12)
+            self.sidebar_frame, 
+            text="Status: Ready", 
+            font=ctk.CTkFont(size=12),
+            text_color="#6b7280"
         )
         self.status_label.grid(row=5, column=0, padx=20, pady=20)
 
-        # ------------------- KONTEN UTAMA -------------------
-        self.main_frame = ctk.CTkFrame(self, corner_radius=10)
+        # ------------------- KONTEN UTAMA (PUTIH) -------------------
+        self.main_frame = ctk.CTkFrame(
+            self, corner_radius=12, fg_color="#ffffff", border_width=1, border_color="#e5e7eb"
+        )
         self.main_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
         # Variable Simpan State
@@ -72,79 +96,97 @@ class EduDocApp(ctk.CTk):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
 
+    def highlight_nav(self, active_btn):
+        for btn in [self.btn_image, self.btn_pdf, self.btn_about]:
+            if btn == active_btn:
+                btn.configure(fg_color="#374151", text_color="#ffffff", hover_color="#1f2937")
+            else:
+                btn.configure(fg_color="#e5e7eb", text_color="#111827", hover_color="#d1d5db")
+
     # ================= 1. TAB IMAGE UTILITY =================
     def show_image_tab(self):
+        self.highlight_nav(self.btn_image)
         self.clear_main_frame()
 
         title = ctk.CTkLabel(
-            self.main_frame, text="Image Utility", font=ctk.CTkFont(size=22, weight="bold")
+            self.main_frame, text="Image Utility", font=ctk.CTkFont(size=22, weight="bold"), text_color="#111827"
         )
-        title.pack(anchor="w", padx=20, pady=(20, 10))
+        title.pack(anchor="w", padx=25, pady=(25, 10))
 
         # File Selector
-        file_frame = ctk.CTkFrame(self.main_frame)
-        file_frame.pack(fill="x", padx=20, pady=10)
+        file_frame = ctk.CTkFrame(self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb")
+        file_frame.pack(fill="x", padx=25, pady=10)
 
         self.btn_select_img = ctk.CTkButton(
-            file_frame, text="Pilih Gambar", command=self.select_image_file
+            file_frame, text="Pilih Gambar", fg_color="#4b5563", hover_color="#374151", command=self.select_image_file
         )
-        self.btn_select_img.pack(side="left", padx=10, pady=10)
+        self.btn_select_img.pack(side="left", padx=12, pady=12)
 
         display_text = os.path.basename(self.selected_image_path) if self.selected_image_path else "Belum ada gambar terpilih"
-        text_color = "white" if self.selected_image_path else "gray"
+        text_color = "#111827" if self.selected_image_path else "#6b7280"
         self.lbl_file_path = ctk.CTkLabel(file_frame, text=display_text, text_color=text_color)
-        self.lbl_file_path.pack(side="left", padx=10, pady=10)
+        self.lbl_file_path.pack(side="left", padx=10, pady=12)
 
         # Options Section
-        opt_frame = ctk.CTkFrame(self.main_frame)
-        opt_frame.pack(fill="x", padx=20, pady=10)
+        opt_frame = ctk.CTkFrame(self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb")
+        opt_frame.pack(fill="x", padx=25, pady=10)
 
-        lbl_format = ctk.CTkLabel(opt_frame, text="Target Format:")
-        lbl_format.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        lbl_format = ctk.CTkLabel(opt_frame, text="Target Format:", text_color="#111827")
+        lbl_format.grid(row=0, column=0, padx=12, pady=12, sticky="w")
         
-        self.combo_format = ctk.CTkComboBox(opt_frame, values=["JPEG", "PNG"])
+        self.combo_format = ctk.CTkComboBox(
+            opt_frame, values=["JPEG", "PNG"], fg_color="#ffffff", border_color="#d1d5db", text_color="#111827"
+        )
         self.combo_format.set("JPEG")
-        self.combo_format.grid(row=0, column=1, padx=10, pady=10)
+        self.combo_format.grid(row=0, column=1, padx=12, pady=12)
 
-        lbl_quality = ctk.CTkLabel(opt_frame, text="Kualitas (Quality):")
-        lbl_quality.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        lbl_quality = ctk.CTkLabel(opt_frame, text="Kualitas (Quality):", text_color="#111827")
+        lbl_quality.grid(row=1, column=0, padx=12, pady=12, sticky="w")
 
         self.slider_quality = ctk.CTkSlider(
-            opt_frame, from_=10, to=100, number_of_steps=90, command=self.update_quality_label
+            opt_frame, from_=10, to=100, number_of_steps=90, button_color="#374151", progress_color="#6b7280", command=self.update_quality_label
         )
         self.slider_quality.set(85)
-        self.slider_quality.grid(row=1, column=1, padx=10, pady=10)
+        self.slider_quality.grid(row=1, column=1, padx=12, pady=12)
 
-        self.lbl_quality_val = ctk.CTkLabel(opt_frame, text="85%")
-        self.lbl_quality_val.grid(row=1, column=2, padx=10, pady=10)
+        self.lbl_quality_val = ctk.CTkLabel(opt_frame, text="85%", text_color="#111827", font=ctk.CTkFont(weight="bold"))
+        self.lbl_quality_val.grid(row=1, column=2, padx=12, pady=12)
 
         # Resize Section
-        resize_frame = ctk.CTkFrame(self.main_frame)
-        resize_frame.pack(fill="x", padx=20, pady=10)
+        resize_frame = ctk.CTkFrame(self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb")
+        resize_frame.pack(fill="x", padx=25, pady=10)
 
-        self.chk_resize = ctk.CTkCheckBox(resize_frame, text="Aktifkan Resize (Opsional)")
-        self.chk_resize.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+        self.chk_resize = ctk.CTkCheckBox(
+            resize_frame, text="Aktifkan Resize (Opsional)", text_color="#111827", fg_color="#374151", hover_color="#1f2937"
+        )
+        self.chk_resize.grid(row=0, column=0, columnspan=2, padx=12, pady=12, sticky="w")
 
-        lbl_w = ctk.CTkLabel(resize_frame, text="Width (px):")
-        lbl_w.grid(row=1, column=0, padx=10, pady=5, sticky="w")
-        self.entry_width = ctk.CTkEntry(resize_frame, placeholder_text="800")
-        self.entry_width.grid(row=1, column=1, padx=10, pady=5)
+        lbl_w = ctk.CTkLabel(resize_frame, text="Width (px):", text_color="#111827")
+        lbl_w.grid(row=1, column=0, padx=12, pady=6, sticky="w")
+        self.entry_width = ctk.CTkEntry(
+            resize_frame, placeholder_text="800", fg_color="#ffffff", border_color="#d1d5db", text_color="#111827"
+        )
+        self.entry_width.grid(row=1, column=1, padx=12, pady=6)
 
-        lbl_h = ctk.CTkLabel(resize_frame, text="Height (px):")
-        lbl_h.grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        self.entry_height = ctk.CTkEntry(resize_frame, placeholder_text="600")
-        self.entry_height.grid(row=2, column=1, padx=10, pady=5)
+        lbl_h = ctk.CTkLabel(resize_frame, text="Height (px):", text_color="#111827")
+        lbl_h.grid(row=2, column=0, padx=12, pady=(6, 12), sticky="w")
+        self.entry_height = ctk.CTkEntry(
+            resize_frame, placeholder_text="600", fg_color="#ffffff", border_color="#d1d5db", text_color="#111827"
+        )
+        self.entry_height.grid(row=2, column=1, padx=12, pady=(6, 12))
 
         # Process Button
         self.btn_process_img = ctk.CTkButton(
             self.main_frame, 
             text="PROSES GAMBAR", 
             font=ctk.CTkFont(size=14, weight="bold"),
-            fg_color="#1f538d",
-            hover_color="#14375e",
+            fg_color="#374151",
+            hover_color="#1f2937",
+            text_color="#ffffff",
+            height=40,
             command=self.handle_process_image
         )
-        self.btn_process_img.pack(fill="x", padx=20, pady=20)
+        self.btn_process_img.pack(fill="x", padx=25, pady=20)
 
     def select_image_file(self):
         file_path = filedialog.askopenfilename(
@@ -154,7 +196,7 @@ class EduDocApp(ctk.CTk):
         if file_path:
             self.selected_image_path = file_path
             self.lbl_file_path.configure(
-                text=os.path.basename(file_path), text_color="white"
+                text=os.path.basename(file_path), text_color="#111827"
             )
 
     def update_quality_label(self, value):
@@ -196,14 +238,15 @@ class EduDocApp(ctk.CTk):
         except Exception as e:
             messagebox.showerror("Error", f"Gagal memproses gambar:\n{str(e)}")
 
-    # ================= 2. TAB PDF UTILITY (STABIL & ANTI-BLANK) =================
+    # ================= 2. TAB PDF UTILITY =================
     def show_pdf_tab(self):
+        self.highlight_nav(self.btn_pdf)
         self.clear_main_frame()
 
         title = ctk.CTkLabel(
-            self.main_frame, text="PDF Utility", font=ctk.CTkFont(size=22, weight="bold")
+            self.main_frame, text="PDF Utility", font=ctk.CTkFont(size=22, weight="bold"), text_color="#111827"
         )
-        title.pack(anchor="w", padx=20, pady=(20, 10))
+        title.pack(anchor="w", padx=25, pady=(25, 10))
 
         # Menu Pilihan Sub-Fitur PDF
         self.pdf_mode_var = ctk.StringVar(value="Merge PDF")
@@ -211,15 +254,22 @@ class EduDocApp(ctk.CTk):
             self.main_frame,
             values=["Merge PDF", "Split PDF", "PDF to Word"],
             variable=self.pdf_mode_var,
+            fg_color="#e5e7eb",
+            selected_color="#374151",
+            selected_hover_color="#1f2937",
+            unselected_color="#e5e7eb",
+            unselected_hover_color="#d1d5db",
+            text_color="#111827",
             command=self.switch_pdf_subview
         )
-        seg_btn.pack(fill="x", padx=20, pady=10)
+        seg_btn.pack(fill="x", padx=25, pady=10)
 
         # Kontainer khusus untuk isi sub-fitur PDF
-        self.pdf_sub_frame = ctk.CTkFrame(self.main_frame)
-        self.pdf_sub_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        self.pdf_sub_frame = ctk.CTkFrame(
+            self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb"
+        )
+        self.pdf_sub_frame.pack(fill="both", expand=True, padx=25, pady=(10, 25))
 
-        # Tampilkan Merge PDF secara default
         self.switch_pdf_subview("Merge PDF")
 
     def switch_pdf_subview(self, mode):
@@ -227,58 +277,68 @@ class EduDocApp(ctk.CTk):
             widget.destroy()
 
         if mode == "Merge PDF":
-            btn_add_pdfs = ctk.CTkButton(self.pdf_sub_frame, text="Pilih / Tambah File PDF", command=self.add_merge_pdfs)
+            btn_add_pdfs = ctk.CTkButton(
+                self.pdf_sub_frame, text="Pilih / Tambah File PDF", fg_color="#4b5563", hover_color="#374151", command=self.add_merge_pdfs
+            )
             btn_add_pdfs.pack(padx=20, pady=(20, 10), anchor="w")
 
             self.lbl_merge_count = ctk.CTkLabel(
-                self.pdf_sub_frame, text=f"{len(self.pdf_merge_list)} File PDF terpilih", font=ctk.CTkFont(size=14)
+                self.pdf_sub_frame, text=f"{len(self.pdf_merge_list)} File PDF terpilih", font=ctk.CTkFont(size=14), text_color="#111827"
             )
             self.lbl_merge_count.pack(padx=20, pady=5, anchor="w")
 
             btn_run_merge = ctk.CTkButton(
                 self.pdf_sub_frame, text="GABUNGKAN PDF", font=ctk.CTkFont(size=14, weight="bold"),
-                fg_color="#1f538d", hover_color="#14375e", command=self.handle_merge_pdfs
+                fg_color="#374151", hover_color="#1f2937", height=40, command=self.handle_merge_pdfs
             )
             btn_run_merge.pack(fill="x", padx=20, pady=30)
 
         elif mode == "Split PDF":
-            btn_select_split = ctk.CTkButton(self.pdf_sub_frame, text="Pilih File PDF", command=self.select_split_pdf)
+            btn_select_split = ctk.CTkButton(
+                self.pdf_sub_frame, text="Pilih File PDF", fg_color="#4b5563", hover_color="#374151", command=self.select_split_pdf
+            )
             btn_select_split.pack(padx=20, pady=(20, 10), anchor="w")
 
             split_txt = os.path.basename(self.selected_split_pdf) if self.selected_split_pdf else "Belum ada file terpilih"
-            split_clr = "white" if self.selected_split_pdf else "gray"
+            split_clr = "#111827" if self.selected_split_pdf else "#6b7280"
             self.lbl_split_file = ctk.CTkLabel(self.pdf_sub_frame, text=split_txt, text_color=split_clr, font=ctk.CTkFont(size=13))
             self.lbl_split_file.pack(padx=20, pady=2, anchor="w")
 
-            split_opts = ctk.CTkFrame(self.pdf_sub_frame)
+            split_opts = ctk.CTkFrame(self.pdf_sub_frame, fg_color="#ffffff", border_width=1, border_color="#e5e7eb")
             split_opts.pack(fill="x", padx=20, pady=15)
 
-            ctk.CTkLabel(split_opts, text="Dari Halaman:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
-            self.entry_start_p = ctk.CTkEntry(split_opts, placeholder_text="1")
-            self.entry_start_p.grid(row=0, column=1, padx=10, pady=10)
+            ctk.CTkLabel(split_opts, text="Dari Halaman:", text_color="#111827").grid(row=0, column=0, padx=12, pady=10, sticky="w")
+            self.entry_start_p = ctk.CTkEntry(
+                split_opts, placeholder_text="1", fg_color="#f9fafb", border_color="#d1d5db", text_color="#111827"
+            )
+            self.entry_start_p.grid(row=0, column=1, padx=12, pady=10)
 
-            ctk.CTkLabel(split_opts, text="Sampai Halaman:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
-            self.entry_end_p = ctk.CTkEntry(split_opts, placeholder_text="2")
-            self.entry_end_p.grid(row=1, column=1, padx=10, pady=10)
+            ctk.CTkLabel(split_opts, text="Sampai Halaman:", text_color="#111827").grid(row=1, column=0, padx=12, pady=10, sticky="w")
+            self.entry_end_p = ctk.CTkEntry(
+                split_opts, placeholder_text="2", fg_color="#f9fafb", border_color="#d1d5db", text_color="#111827"
+            )
+            self.entry_end_p.grid(row=1, column=1, padx=12, pady=10)
 
             btn_run_split = ctk.CTkButton(
                 self.pdf_sub_frame, text="PISAHKAN PDF", font=ctk.CTkFont(size=14, weight="bold"),
-                fg_color="#1f538d", hover_color="#14375e", command=self.handle_split_pdf
+                fg_color="#374151", hover_color="#1f2937", height=40, command=self.handle_split_pdf
             )
             btn_run_split.pack(fill="x", padx=20, pady=20)
 
         elif mode == "PDF to Word":
-            btn_select_docx = ctk.CTkButton(self.pdf_sub_frame, text="Pilih File PDF", command=self.select_docx_pdf)
+            btn_select_docx = ctk.CTkButton(
+                self.pdf_sub_frame, text="Pilih File PDF", fg_color="#4b5563", hover_color="#374151", command=self.select_docx_pdf
+            )
             btn_select_docx.pack(padx=20, pady=(20, 10), anchor="w")
 
             docx_txt = os.path.basename(self.selected_docx_pdf) if self.selected_docx_pdf else "Belum ada file terpilih"
-            docx_clr = "white" if self.selected_docx_pdf else "gray"
+            docx_clr = "#111827" if self.selected_docx_pdf else "#6b7280"
             self.lbl_docx_file = ctk.CTkLabel(self.pdf_sub_frame, text=docx_txt, text_color=docx_clr, font=ctk.CTkFont(size=13))
             self.lbl_docx_file.pack(padx=20, pady=2, anchor="w")
 
             btn_run_docx = ctk.CTkButton(
                 self.pdf_sub_frame, text="KONVERSI KE DOCX", font=ctk.CTkFont(size=14, weight="bold"),
-                fg_color="#1f538d", hover_color="#14375e", command=self.handle_pdf_to_docx
+                fg_color="#374151", hover_color="#1f2937", height=40, command=self.handle_pdf_to_docx
             )
             btn_run_docx.pack(fill="x", padx=20, pady=30)
 
@@ -308,7 +368,7 @@ class EduDocApp(ctk.CTk):
         file_path = filedialog.askopenfilename(title="Pilih File PDF", filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             self.selected_split_pdf = file_path
-            self.lbl_split_file.configure(text=os.path.basename(file_path), text_color="white")
+            self.lbl_split_file.configure(text=os.path.basename(file_path), text_color="#111827")
 
     def handle_split_pdf(self):
         if not self.selected_split_pdf:
@@ -336,7 +396,7 @@ class EduDocApp(ctk.CTk):
         file_path = filedialog.askopenfilename(title="Pilih File PDF", filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             self.selected_docx_pdf = file_path
-            self.lbl_docx_file.configure(text=os.path.basename(file_path), text_color="white")
+            self.lbl_docx_file.configure(text=os.path.basename(file_path), text_color="#111827")
 
     def handle_pdf_to_docx(self):
         if not self.selected_docx_pdf:
@@ -353,20 +413,24 @@ class EduDocApp(ctk.CTk):
 
     # ================= 3. TAB ABOUT =================
     def show_about_tab(self):
+        self.highlight_nav(self.btn_about)
         self.clear_main_frame()
 
         title = ctk.CTkLabel(
-            self.main_frame, text="About EduDoc Utility", font=ctk.CTkFont(size=22, weight="bold")
+            self.main_frame, text="About EduDoc Utility", font=ctk.CTkFont(size=22, weight="bold"), text_color="#111827"
         )
-        title.pack(anchor="w", padx=20, pady=(20, 10))
+        title.pack(anchor="w", padx=25, pady=(25, 10))
 
-        info_frame = ctk.CTkFrame(self.main_frame)
-        info_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        info_frame = ctk.CTkFrame(
+            self.main_frame, fg_color="#f9fafb", border_width=1, border_color="#e5e7eb"
+        )
+        info_frame.pack(fill="both", expand=True, padx=25, pady=(10, 25))
 
         app_title = ctk.CTkLabel(
             info_frame, 
             text="EduDoc Desktop Utility v1.0", 
-            font=ctk.CTkFont(size=18, weight="bold")
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color="#111827"
         )
         app_title.pack(anchor="w", padx=20, pady=(20, 10))
 
@@ -376,12 +440,12 @@ class EduDocApp(ctk.CTk):
             "serta konversi dokumen PDF menjadi dokumen Word yang dapat diedit."
         )
         lbl_desc = ctk.CTkLabel(
-            info_frame, text=app_desc, justify="left", wraplength=600, font=ctk.CTkFont(size=13)
+            info_frame, text=app_desc, justify="left", wraplength=600, font=ctk.CTkFont(size=13), text_color="#374151"
         )
         lbl_desc.pack(anchor="w", padx=20, pady=(0, 15))
 
         tech_title = ctk.CTkLabel(
-            info_frame, text="Teknologi yang Digunakan:", font=ctk.CTkFont(size=14, weight="bold")
+            info_frame, text="Teknologi yang Digunakan:", font=ctk.CTkFont(size=14, weight="bold"), text_color="#111827"
         )
         tech_title.pack(anchor="w", padx=20, pady=(5, 5))
 
@@ -392,7 +456,7 @@ class EduDocApp(ctk.CTk):
             "• PDF Engine: PyPDF & pdf2docx"
         )
         lbl_tech = ctk.CTkLabel(
-            info_frame, text=tech_stack, justify="left", font=ctk.CTkFont(size=13)
+            info_frame, text=tech_stack, justify="left", font=ctk.CTkFont(size=13), text_color="#374151"
         )
         lbl_tech.pack(anchor="w", padx=25, pady=(0, 20))
 
