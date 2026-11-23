@@ -98,7 +98,6 @@ class EduDocApp(ctk.CTk):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
 
-    # LANGKAH 1: Fungsi pembantu untuk konfirmasi buka folder
     def notify_and_open_folder(self, message, file_path):
         open_dir = messagebox.askyesno(
             "Sukses", 
@@ -260,7 +259,8 @@ class EduDocApp(ctk.CTk):
                 resize_dim=resize_dim
             )
             self.status_label.configure(text="Status: Image Saved!")
-            messagebox.showinfo("Sukses", "Gambar berhasil diproses dan disimpan!")
+            # LANGKAH 2: Pemanggilan fungsi buka folder
+            self.notify_and_open_folder("Gambar berhasil diproses dan disimpan!", save_path)
         except Exception as e:
             messagebox.showerror("Error", f"Gagal memproses gambar:\n{str(e)}")
 
@@ -386,7 +386,8 @@ class EduDocApp(ctk.CTk):
                 self.pdf_merge_list.clear()
                 self.lbl_merge_count.configure(text="0 File PDF terpilih")
                 self.status_label.configure(text="Status: PDFs Merged!")
-                messagebox.showinfo("Sukses", "File PDF berhasil digabungkan!")
+                # LANGKAH 2: Pemanggilan fungsi buka folder
+                self.notify_and_open_folder("File PDF berhasil digabungkan!", save_path)
             except Exception as e:
                 messagebox.showerror("Error", f"Gagal menggabungkan PDF:\n{str(e)}")
 
@@ -414,7 +415,8 @@ class EduDocApp(ctk.CTk):
             try:
                 split_pdf(self.selected_split_pdf, save_path, start, end)
                 self.status_label.configure(text="Status: PDF Split!")
-                messagebox.showinfo("Sukses", "Halaman PDF berhasil dipisahkan!")
+                # LANGKAH 2: Pemanggilan fungsi buka folder
+                self.notify_and_open_folder("Halaman PDF berhasil dipisahkan!", save_path)
             except Exception as e:
                 messagebox.showerror("Error", f"Gagal memisahkan PDF:\n{str(e)}")
 
@@ -433,7 +435,8 @@ class EduDocApp(ctk.CTk):
             try:
                 pdf_to_docx(self.selected_docx_pdf, save_path)
                 self.status_label.configure(text="Status: Converted to DOCX!")
-                messagebox.showinfo("Sukses", "File PDF berhasil dikonversi ke format Word (.docx)!")
+                # LANGKAH 2: Pemanggilan fungsi buka folder
+                self.notify_and_open_folder("File PDF berhasil dikonversi ke format Word (.docx)!", save_path)
             except Exception as e:
                 messagebox.showerror("Error", f"Gagal mengonversi PDF:\n{str(e)}")
 
